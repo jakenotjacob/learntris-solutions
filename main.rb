@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 #
-require 'colorize'
 
 
 class TetrisBoard
@@ -139,7 +138,7 @@ class TetrisBoard
         when "right"
             @tet_coords[:x] += 1 unless right_column.uniq.count > 1
         when "down"
-            @tet_coords[:y] += 1 
+          @tet_coords[:y] += 1 unless (@tet_coords[:y]+@active_tetramino.length) > @depth
         end
         remove_previous
     end
