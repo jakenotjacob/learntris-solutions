@@ -132,11 +132,12 @@ class TetrisBoard
     end
 
     def move_tetramino(direction)
+        right_column = @matrix.collect { |row| row.last }
         case direction
         when "left"
             @tet_coords[:x] -= 1 if (@tet_coords[:x] > 0)
         when "right"
-            @tet_coords[:x] += 1 if (@tet_coords[:x]+3 < @width)
+            @tet_coords[:x] += 1 unless right_column.uniq.count > 1
         when "down"
             @tet_coords[:y] += 1 
         end
@@ -213,6 +214,8 @@ class TetrisBoard
             move_tetramino("down")
         when "t" #Display active tetramino
             active_tetramino()
+        when "X"
+            puts "#{@tet_coords[:x]}, #{@tet_coords[:y]}"
 
 
         when "?n" #Get lines cleared
