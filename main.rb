@@ -118,16 +118,18 @@ class TetrisBoard
         else
             @active_tetramino = @active_tetramino.transpose
         end
-        remove_previous
+        remove_shadow
     end
 
-    def remove_previous
+    def remove_shadow
        @matrix.each { |row|
            row.map! { |cell|
                if cell.nil?
                    next
-               else
+               elsif (cell == cell.upcase)
                    nil
+               else
+                   cell
                end
            }
        }
@@ -141,9 +143,9 @@ class TetrisBoard
         when "right"
             @tet_coords[:x] += 1 unless right_column.uniq.count > 1
         when "down"
-          @tet_coords[:y] += 1 unless (@tet_coords[:y]+@active_tetramino.length) > @depth
+            @tet_coords[:y] += 1 unless (@tet_coords[:y]+@active_tetramino.length) > @depth
         end
-        remove_previous
+        remove_shadow
     end
 
     def drop_tetramino
@@ -156,7 +158,7 @@ class TetrisBoard
                 move_tetramino("down")
             end
         end
-        remove_previous
+        remove_shadow
         deactivate_tetramino
     end
 
