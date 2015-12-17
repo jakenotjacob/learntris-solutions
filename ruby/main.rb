@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 #
+require 'colorize'
 
 
 class TetrisBoard
@@ -11,7 +12,6 @@ class TetrisBoard
         @cleared_lines = 0
         @active_tetramino = nil
         @tet_coords = { x: nil, y: nil }
-        @rotated = false
         @matrix = Array.new(depth) { Array.new(width) }
     end
     
@@ -112,24 +112,20 @@ class TetrisBoard
     end
 
     def rotate_tetramino(direction)
-        @rotated = true
         if direction == "cw"
             @active_tetramino = @active_tetramino.reverse.transpose
         else
             @active_tetramino = @active_tetramino.transpose
         end
-        remove_shadow
     end
 
-    def remove_shadow
+    def remove_previous
        @matrix.each { |row|
            row.map! { |cell|
                if cell.nil?
                    next
-               elsif (cell == cell.upcase)
-                   nil
                else
-                   cell
+                   nil
                end
            }
        }
@@ -143,34 +139,13 @@ class TetrisBoard
         when "right"
             @tet_coords[:x] += 1 unless right_column.uniq.count > 1
         when "down"
-            @tet_coords[:y] += 1 unless (@tet_coords[:y]+@active_tetramino.length) > @depth
+            @tet_coords[:y] += 1 unless @tet_coords[:y] == 20
         end
-        remove_shadow
+        remove_previous
     end
 
-    def drop_tetramino
-        if @rotated == false
-            until (@tet_coords[:y]+@active_tetramino.length) > @depth
-                move_tetramino("down")
-            end
-        else
-            until (@tet_coords[:y]+@active_tetramino.length) == @depth
-                move_tetramino("down")
-            end
-        end
-        remove_shadow
-        deactivate_tetramino
-    end
+    def drop_tetramino()
 
-    def deactivate_tetramino
-        @active_tetramino.each.with_index { |row, rindex|
-            row.each.with_index { |cell, cindex|
-                if cell.nil?
-                    next
-                end
-                @matrix[rindex+@tet_coords[:y]][cindex+@tet_coords[:x]] = cell.downcase
-            }
-        }
     end
 
     def activate_tetramino(tet_sym)
@@ -242,7 +217,7 @@ class TetrisBoard
         when "v"
             move_tetramino("down")
         when "V"
-            drop_tetramino
+            drop_tetramino()
         when "t" #Display active tetramino
             active_tetramino()
         when "X"
